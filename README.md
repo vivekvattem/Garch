@@ -1,125 +1,233 @@
-# 📈 S&P 500 GJR-GARCH Quantitative Trading Strategy
+# 📈 S&P 500 Quantitative Trading Strategy — GJR-GARCH Enhanced
 
-A full-stack quantitative trading research platform built using **Streamlit**, implementing a **multi-factor long-short strategy enhanced with GJR-GARCH volatility modeling**.
+A research-grade **multi-factor long/short trading system** integrating:
 
----
+- 🧹 Robust Data Engineering  
+- 📊 Technical Factor Modeling  
+- 📈 GJR-GARCH Volatility Forecasting  
+- 📉 Fama-French 5-Factor Exposure  
+- ⚖️ Risk-Aware Portfolio Construction  
 
-## 🚀 Overview
-
-This project builds an institutional-grade quant pipeline that:
-
-- 📊 Uses **technical + statistical factors**
-- ⚖️ Applies **risk-aware position sizing**
-- 🔴 Detects **market stress regimes**
-- 🧠 Integrates **GJR-GARCH volatility modeling**
-- 📉 Benchmarks against the **S&P 500 (SPY)**
+Built with **Python + Streamlit**, this project simulates an **institutional quant pipeline**.
 
 ---
 
-## 🧠 Strategy Architecture
-
-### Core Idea
+## 🧠 Strategy Philosophy
 
 > Inefficiency → Signal → Alpha → Risk Control → Profit
 
-The system combines:
-
-### 📐 Factors Used
-- **RSI** → Momentum signal  
-- **ATR** → Volatility normalization  
-- **Bollinger Band Width** → Volatility expansion  
-- **MACD Histogram** → Trend strength  
-- **GARCH Volatility** → Conditional risk  
+This system identifies cross-sectional inefficiencies and enhances them using **volatility-aware modeling**.
 
 ---
 
-## 🔬 GARCH Enhancements (Key Innovation)
+## 🔬 Core Innovations
 
-The model uses **GJR-GARCH (1,1)** in 3 ways:
+### 🧩 1. Multi-Factor Alpha Model
+Exactly **5 factors tested**:
 
-1. 📊 **Factor Signal**
-   - Low-volatility anomaly (stocks with lower predicted volatility outperform)
-
-2. ⚖️ **Position Sizing**
-   - Inverse volatility weighting (risk parity style)
-
-3. 🔴 **Regime Filter**
-   - Reduce exposure during high-volatility stress periods
+- `rsi` → Momentum  
+- `atr` → Volatility normalization  
+- `bb_width` → Volatility expansion  
+- `macd_hist` → Trend strength  
+- `garch_vol` → Conditional volatility  
 
 ---
 
-## 🏗️ Pipeline Architecture
+### 📈 2. GJR-GARCH(1,1) Volatility Modeling
+
+Unlike standard GARCH, **GJR-GARCH captures leverage effects**:
+
+- Negative returns → higher volatility than positive returns  
+- Critical for realistic financial modeling  
+
+---
+
+### ⚙️ 3. Three GARCH Use-Cases
+
+#### 📊 (a) Factor Signal
+- Use volatility as alpha (Low-Vol Anomaly)
+
+#### ⚖️ (b) Position Sizing
+- Inverse volatility weighting  
+- Risk parity style allocation  
+
+#### 🔴 (c) Regime Filter
+- Detect high-stress regimes  
+- Reduce exposure dynamically  
+
+---
+
+## 🏗️ Full Pipeline
 
 
-### Step-by-step:
+Raw Data → Cleaning → Feature Engineering → GARCH Modeling
+→ Monthly Aggregation → Factor Ranking
+→ Portfolio Construction → Backtesting → Diagnostics
 
+
+---
+
+## 🔄 Step-by-Step Workflow
+
+### 📥 Data Layer
 1. Fetch S&P 500 tickers (Wikipedia)
-2. Download historical OHLCV data (Yahoo Finance)
-3. Clean & filter data
-4. Compute technical indicators
-5. Fit **GJR-GARCH per stock**
-6. Convert to monthly data
-7. Compute **Fama-French 5-factor betas**
-8. Rank stocks by factors
-9. Construct long-short portfolio
-10. Backtest with:
-   - Equal weight
-   - GARCH inverse-vol weighting
-   - Regime filtering
+2. Download OHLCV data (Yahoo Finance)
+3. Initial data cleaning & validation
 
 ---
 
-## 📊 Features
+### 🧹 Data Engineering
+- Remove invalid OHLC values  
+- Filter stocks with insufficient coverage  
+- Ensure **minimal missing data**  
 
-### 📌 Quant Features
-- Multi-factor alpha generation
-- Rolling regression (Fama-French)
+---
+
+### 📊 Feature Engineering
+
+#### Technical Indicators
+- RSI (14)
+- ATR (normalized)
+- MACD Histogram (z-scored)
+- Bollinger Band Width
+
+#### GARCH Features
+- Conditional volatility (`garch_vol`)
+- Volatility ratio
+- Leverage parameter (γ)
+
+---
+
+### 📆 Monthly Aggregation
+- Convert daily → monthly
+- Select **Top 150 liquid stocks**
+- Liquidity = rolling dollar volume
+
+---
+
+### 📉 Returns Calculation
+- Multi-horizon returns:
+  - 1M, 2M, 3M, 6M, 9M, 12M
+- Outlier clipping (robust stats)
+
+---
+
+### 🧠 Factor Exposure (Fama-French)
+
+- Download **Fama-French 5 Factors**
+- Compute **rolling betas (Rolling OLS)**
+- Use as additional signals
+
+---
+
+### 🧪 Factor Testing
+
+Each factor is tested via:
+
 - Cross-sectional ranking
-- Long-short portfolio construction
+- Long top N stocks
+- Short bottom N stocks
+- Monthly rebalancing
 
-### ⚙️ Risk Features
-- GARCH volatility forecasting
-- Stress regime detection
-- Volatility scaling
+---
 
-### 📈 Analytics
+### 🧠 Multi-Factor Strategy
+
+- Convert factors → z-scores
+- Combine into **composite score**
+- Rank & construct portfolio
+
+---
+
+### ⚙️ GARCH Enhancements
+
+#### 📊 Position Sizing
+
+weight ∝ 1 / volatility
+
+
+#### 🔴 Regime Filter
+- Compute cross-sectional median volatility
+- Identify stress periods
+- Scale down exposure
+
+---
+
+## 📊 Backtesting Framework
+
+### Strategies Compared
+
+- Multi-Factor (baseline)
+- Best Single Factor
+- GARCH Inverse-Vol Strategy
+- GARCH + Regime Filter
+- S&P 500 Benchmark (SPY)
+
+---
+
+## 📈 Performance Metrics
+
+- Total Return
 - Sharpe Ratio
-- Drawdown
+- Volatility
+- Max Drawdown
+- Win Rate
 - Rolling Sharpe
-- Return distributions
-- Factor performance ranking
 
-### 📉 Visualization
-- Cumulative returns
-- Correlation heatmaps
-- GARCH diagnostics
-- Performance comparison charts
+---
+
+## 🔬 GARCH Diagnostics
+
+### Parameters Analyzed:
+- α → ARCH effect  
+- β → GARCH persistence  
+- γ → Leverage effect  
+
+### Persistence Check:
+
+α + β + γ/2
+
+
+- < 1 → Stationary  
+- ≈ 1 → Highly persistent volatility  
+
+---
+
+## 📊 Visualizations
+
+- Cumulative returns comparison  
+- Rolling Sharpe ratio  
+- Drawdown curves  
+- Return distributions  
+- Factor performance ranking  
+- Correlation heatmaps  
+- GARCH parameter distributions  
 
 ---
 
 ## 🛠️ Tech Stack
 
-### 🧑‍💻 Backend / Quant
-- `Python`
-- `pandas`, `numpy`
-- `statsmodels`
-- `arch` (GARCH modeling)
-- `pandas_ta` (technical indicators)
+### Quant & Data
+- Python
+- pandas, numpy
+- statsmodels
+- arch (GARCH)
+- pandas_ta
 
-### 📡 Data
-- `yfinance`
-- `pandas_datareader`
+### Data Sources
+- yfinance
+- pandas_datareader
 - Wikipedia scraping
 
-### 🎨 Frontend
-- `Streamlit`
-- `matplotlib`, `seaborn`
+### Visualization & UI
+- Streamlit
+- matplotlib
+- seaborn
 
 ---
 
-## 📦 Installation
+## ▶️ Running the Project
 
-```bash
-git clone https://github.com/yourusername/garch-quant-strategy.git
-cd garch-quant-strategy
+```bash id="h2v4w7"
 pip install -r requirements.txt
+streamlit run app.py
